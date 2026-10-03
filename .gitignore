@@ -1,0 +1,26 @@
+# Secrets -- a backend credential would live in Engine/.env; never commit it
+.env
+.env.*
+
+# Virtual environments (the engine's venv is meant to live outside the repo)
+.venv/
+venv/
+env/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Scratch state staged between run_scene_draft -> run_scene_commit -> run_scene_take
+LOGS_scratch_*.json
+
+# Local run logs
+LOGS/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

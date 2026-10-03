@@ -1,0 +1,48 @@
+{
+  "_comment": [
+    "Role -> backend map. `Local & Hybrid Hosting Plan.md` §4 specifies this as",
+    "config, not code: 'one entry per logical role, each pointing at a backend',",
+    "'overridable per-scene without touching engine code, the same way a World",
+    "Pack swap doesn't touch engine code'.",
+    "",
+    "EDIT THIS FILE, NOT THE ENGINE, to change which model serves a role.",
+    "",
+    "The split follows call volume, per §4: high-volume/lower-judgment stays",
+    "local; low-volume/high-judgment goes to the cloud tier. The cloud tier is",
+    "CLAUDE CODE as of 2026-08-17 (Matt: 'as we build it, Claude through Claude",
+    "Code needs to be the model'), not Gemini -- that key was deleted and is",
+    "being revoked at the provider. The gemini backend stays defined and unused."
+  ],
+
+  "backends": {
+    "ollama":      { "model": "deepseek-r1:14b" },
+    "claude_code": { "model": "sonnet", "timeout": 180 },
+    "gemini":      { "model": "gemini-2.5-flash" }
+  },
+
+  "roles": {
+    "actor_draft": {
+      "backend": "ollama",
+      "_why": "§4: highest call volume in the turn loop -- 2-3 alts, per Actor, every turn. Never route this to a subprocess-per-call backend."
+    },
+    "table_read": {
+      "backend": "ollama",
+      "_why": "§4: a cheap, low-stakes setup check by design."
+    },
+    "director_arbitration": {
+      "backend": "claude_code",
+      "model": "sonnet",
+      "_why": "§4: nuanced judgment, called once per take rather than once per alt."
+    },
+    "continuity_classify": {
+      "backend": "claude_code",
+      "model": "sonnet",
+      "_why": "§7/§8: runs only after the deterministic graph walk narrows the candidate set."
+    },
+    "manuscript_compile": {
+      "backend": "claude_code",
+      "model": "opus",
+      "_why": "§10: prose-level judgment in chapter-sized chunks; the plan reserves the stronger tier for exactly this."
+    }
+  }
+}
